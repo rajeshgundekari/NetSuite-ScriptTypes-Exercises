@@ -1,0 +1,1 @@
+All the exercises of my work on NetSuite learning will be uploaded here

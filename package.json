@@ -1,0 +1,18 @@
+{
+    "name": "exercises",
+    "version": "1.0.0",
+    "description": "",
+    "scripts": {
+      "test": "jest"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+      "@oracle/suitecloud-unit-testing": "^1.2.0",
+      "eslint": "^8.21.0",
+      "jest": "^28.1.0"
+    },
+    "dependencies": {
+      "eslint-plugin-suitescript": "^1.2.1"
+    }
+  }
