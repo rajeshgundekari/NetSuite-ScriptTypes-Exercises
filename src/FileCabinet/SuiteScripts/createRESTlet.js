@@ -17,6 +17,11 @@ define(['N/https', 'N/record'],
             try{
                 log.debug('requestParams ', requestParams);
                 let recordInfo = record.load({type: record.Type.CUSTOMER, id: requestParams['id']});
+                if(!recordInfo) {
+                    return {
+                        error: 'Please provide a valid id in the request'
+                    };
+                }
                 let data = {
                     "NAME": recordInfo.getValue({
                         fieldId: 'entityid'
@@ -50,6 +55,11 @@ define(['N/https', 'N/record'],
             try {
                 log.debug('requestBody ', requestBody);
                 let recordInfo = record.load({type: record.Type.CUSTOMER, id: requestBody.id});
+                if(!recordInfo) {
+                    return {
+                        error: 'Please provide a valid id in the request'
+                    };
+                }
                 recordInfo.setValue({fieldId: 'phone', value: requestBody.phone});
                 recordInfo.setValue({fieldId: 'comments', value: requestBody.comments});
                 let updatedRecordId = recordInfo.save();
