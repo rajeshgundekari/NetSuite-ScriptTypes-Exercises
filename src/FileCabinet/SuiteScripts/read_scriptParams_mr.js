@@ -2,9 +2,9 @@
  * @NApiVersion 2.1
  * @NScriptType MapReduceScript
  */
-define(['N/record', 'N/runtime', 'N/search', 'N/log'],
+define(['N/runtime', 'N/search', 'N/record'],
     
-    (record, runtime, search, log) => {
+    (runtime, search, record) => {
         /**
          * Defines the function that is executed at the beginning of the map/reduce process and generates the input data.
          * @param {Object} inputContext
@@ -20,26 +20,25 @@ define(['N/record', 'N/runtime', 'N/search', 'N/log'],
 
         const getInputData = (inputContext) => {
             try {
-                let salesorderObj = search.create({
-                    type: 'salesorder',
-                    filters: [
-                        [
-                            ["trandate","before","today"], 
-                            "AND", 
-                            ["mainline","is","T"]
-                        ],
-                    ],
-                    columns: [
-                        search.createColumn({ name: "entity", label: "Customer" }),
-                        search.createColumn({ name: "trandate", label: "TransactionDate" }),
-                        search.createColumn({ name: "tranid", label: "ORDER" })
-                    ]
+                let searchId = runtime.getCurrentScript().getParameter('custscript_param_id');
+                log.debug('searchId ', searchId);
+                search.load({
+                    type: record.Type.CUSTOMER,
+                    id: searchId
+                }).run().each((result)=> {
+                    let recordObj = record.load({
+                        type: record.Type.CUSTOMER,
+                        id: result.id 
+                    });
+                    recordObj.setValue({
+                        fieldId: 'custrecord1447',
+                        value: 'Sudarshan Bangalore'
+                    });
+                    let recordSaved = recordObj.save();
+                    return ` Success !! Record ${recordSaved} updated`;
                 });
-                //let salesorderObjCount = salesorderObj.runPaged().count;
-                log.debug('salesorderObj ', salesorderObj);
-                return salesorderObj;
             } catch(e) {
-                log.debug('inside catch of getInputData() ', e);
+                return e.message;
             }
         };
 
@@ -61,18 +60,7 @@ define(['N/record', 'N/runtime', 'N/search', 'N/log'],
          */
 
         const map = (mapContext) => {
-            try {
-                log.debug('JSON.parse(mapContext.value) ', JSON.parse(mapContext.value));
-                let transformedSalesOrderRecord = record.transform({
-                    fromType: record.Type.SALES_ORDER,
-                    fromId: JSON.parse(mapContext.value).id,
-                    toType: record.Type.INVOICE
-                });
-                let id = transformedSalesOrderRecord.save();
-                log.debug('transformedSalesOrderRecord ', id);
-            } catch(e) {
-                log.debug('inside map`s catch block ', e);
-            }
+
         };
 
         /**
@@ -115,12 +103,8 @@ define(['N/record', 'N/runtime', 'N/search', 'N/log'],
          * @since 2015.2
          */
         const summarize = (summaryContext) => {
-            log.debug('summarize ', 'Execution completes');
+
         };
-        return {
-            getInputData: getInputData, 
-            map: map, 
-            reduce: reduce,
-            summarize: summarize
-        };
+
+        return {getInputData: getInputData, map, reduce, summarize};
     });

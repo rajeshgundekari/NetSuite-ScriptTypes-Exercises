@@ -24,9 +24,8 @@ define(['N/record'],
                 });
                 form.clientScriptModulePath = './Ex1_cs.js';
             }
-        }
+        };
         return {
             beforeLoad: beforeLoad
         };
-
     });
